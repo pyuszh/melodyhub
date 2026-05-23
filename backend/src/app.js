@@ -10,6 +10,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'https://melodyhub-blush.vercel.app',
     'https://melodyhub-phi.vercel.app',
   ],
   credentials: true,

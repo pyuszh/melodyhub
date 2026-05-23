@@ -1,25 +1,15 @@
-import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
 
     const navigate = useNavigate();
 
-    async function handleLogout() {
+    function handleLogout() {
 
-        try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
 
-            await api.post("/auth/logout");
-
-            localStorage.removeItem("role");
-
-            navigate("/login");
-
-        } catch (err) {
-
-            console.log(err);
-
-        }
+        navigate("/login");
 
     }
 
@@ -30,17 +20,15 @@ function Navbar() {
             background: "#121212",
             color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "space-between",
+            alignItems: "center",
             padding: "0 30px",
-            fontSize: "25px",
-            fontWeight: "bold",
             borderBottom: "1px solid #282828"
         }}>
 
-            <div>
+            <h1>
                 MelodyHub 🎵
-            </div>
+            </h1>
 
             <button
                 onClick={handleLogout}

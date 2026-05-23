@@ -7,7 +7,8 @@ const musicRoutes = require("./routes/music.route");
 const app = express();
 
 app.use(cors({
-    origin: "*"
+    origin: "https://melodyhub-phi.vercel.app",
+    credentials: true
 }));
 
 app.use(express.json());

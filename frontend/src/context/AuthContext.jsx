@@ -16,16 +16,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (credentials) => {
     const res = await apiLogin(credentials);
     const { user: u, token } = res.data;
-    // Backend sends token in cookie AND we grab it from header if present
-    // For Render → Vercel cross-origin, store it manually
-    // The backend also returns it in the JSON body as message/user
-    // We'll store whatever the interceptor needs:
-    if (res.headers?.authorization) {
-      localStorage.setItem('token', res.headers.authorization.replace('Bearer ', ''));
-    }
-    // Fallback: if token comes back in body (add it on backend side optionally)
-    // For now we re-login returns cookie; if CORS blocks cookie we rely on interceptor
-    // Store user info
+    if (token) localStorage.setItem('token', token);   // ← save token
     localStorage.setItem('user', JSON.stringify(u));
     setUser(u);
     return u;
@@ -33,7 +24,8 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async (credentials) => {
     const res = await apiRegister(credentials);
-    const { user: u } = res.data;
+    const { user: u, token } = res.data;
+    if (token) localStorage.setItem('token', token);   // ← save token
     localStorage.setItem('user', JSON.stringify(u));
     setUser(u);
     return u;

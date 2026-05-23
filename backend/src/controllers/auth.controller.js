@@ -52,14 +52,15 @@ async function registerUser(req, res) {
         res.cookie("token", token);
 
         res.status(201).json({
-            message: "User registered successfully",
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.role
-            }
-        });
+  message: "User registered successfully",
+  token,                          // ADD THIS LINE
+  user: {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    role: user.role
+  }
+});
 
     } catch (err) {
 
@@ -121,14 +122,15 @@ async function loginUser(req, res) {
         res.cookie("token", token);
 
         res.status(200).json({
-            message: "User logged in successfully",
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.role
-            }
-        });
+  message: "User logged in successfully",
+  token,                          // ADD THIS LINE
+  user: {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    role: user.role
+  }
+});
 
     } catch (err) {
 

@@ -1,8 +1,16 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://melodyhub-backend-y195.onrender.com",
-    withCredentials: true
+  baseURL: import.meta.env.VITE_API_URL || "https://melodyhub-backend-y195.onrender.com",
+  withCredentials: true, // needed if you ever use cookies; harmless for JWT
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export default api;

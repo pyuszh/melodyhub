@@ -7,20 +7,31 @@ const musicRoutes = require("./routes/music.route");
 const app = express();
 
 const corsOptions = {
-    origin: [
-        "https://melodyhub-phi.vercel.app",
-        "http://localhost:5173"
-    ],
+    origin: function (origin, callback) {
+
+        const allowed =
+            !origin ||
+            origin === "http://localhost:5173" ||
+            /^https:\/\/melodyhub.*\.vercel\.app$/.test(origin);
+
+        if (allowed) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS: " + origin));
+        }
+    },
+
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+
+    allowedHeaders: [
+        "Content-Type",
+        "Authorization"
+    ],
+
     credentials: true
 };
 
-// VERY IMPORTANT
 app.use(cors(corsOptions));
-
-// VERY VERY IMPORTANT
-app.options("*", cors(corsOptions));
 
 app.use(express.json());
 

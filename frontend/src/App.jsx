@@ -1,85 +1,41 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext.jsx';
+import Layout from './components/Layout.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import HomePage from './pages/HomePage.jsx';
+import AlbumsPage from './pages/AlbumsPage.jsx';
+import AlbumDetailPage from './pages/AlbumDetailPage.jsx';
+import ArtistStudioPage from './pages/ArtistStudioPage.jsx';
 
-import Home from "./pages/Home";
-import Album from "./pages/Album";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import UploadMusic from "./pages/UploadMusic";
-import CreateAlbum from "./pages/CreateAlbum";
-
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
-
-
-function App() {
-
-  return (
-
-    <BrowserRouter>
-
-      <div style={{
-        background: "black",
-        minHeight: "100vh"
-      }}>
-
-        <Navbar />
-
-        <div style={{
-          display: "flex"
-        }}>
-
-          <Sidebar />
-
-          <div style={{
-            flex: 1
-          }}>
-
-            <Routes>
-
-              <Route
-                path="/"
-                element={<Home />}
-              />
-
-              <Route
-                path="/albums/:albumId"
-                element={<Album />}
-              />
-
-              <Route
-                path="/login"
-                element={<Login />}
-              />
-
-              <Route
-                path="/register"
-                element={<Register />}
-              />
-
-              <Route
-                path="/upload"
-                element={<UploadMusic />}
-              />
-
-              <Route
-                path="/create-album"
-                element={<CreateAlbum />}
-              />
-
-
-
-            </Routes>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </BrowserRouter>
-
-  )
-
+function PrivateRoute({ children }) {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" replace />;
 }
 
-export default App;
+function ArtistRoute({ children }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== 'artist') return <Navigate to="/" replace />;
+  return children;
+}
+
+export default function App() {
+  const { user } = useAuth();
+
+  return (
+    <Routes>
+      <Route path="/login"    element={user ? <Navigate to="/" /> : <LoginPage />} />
+      <Route path="/register" element={user ? <Navigate to="/" /> : <RegisterPage />} />
+
+      <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+        <Route index element={<HomePage />} />
+        <Route path="albums" element={<AlbumsPage />} />
+        <Route path="albums/:albumId" element={<AlbumDetailPage />} />
+        <Route path="studio" element={<ArtistRoute><ArtistStudioPage /></ArtistRoute>} />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
